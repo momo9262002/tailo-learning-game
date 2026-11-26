@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>台羅入聲大挑戰</title>
+  <style>
+    :root {
+      --bg-cream: #FDFBF3;
+      --bg-card: #FFFFFF;
+      --navy: #1E325C;
+      --navy-light: #3E5481;
+      --coral: #FF6B5B;
+      --coral-dark: #E04F3F;
+      --coral-soft: #FFE4E0;
+      --green-btn: #2EB872;
+      --green-btn-dark: #21965B;
+      --amber-btn: #F59E0B;
+      --amber-btn-dark: #D97706;
+      --slate-btn: #64748B;
+      --slate-btn-dark: #475569;
+      --purple-btn: #7C5CFA;
+      --purple-btn-dark: #5E3EE0;
+      --border-soft: #E5DEC9;
+
+      /* 五個扇形柔和配色 (順時針：k綠、kh藍、ts紫、tsh黃、h粉紅) */
+      --sector-k: #A8E6CF;
+      --sector-kh: #A3D8F4;
+      --sector-ts: #D7BDE2;
+      --sector-tsh: #FFF0A5;
+      --sector-h: #FFB7C5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background-color: #EAE4D3;
+      font-family: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", "Heiti TC", sans-serif;
+      color: var(--navy);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 16:9 橫式主舞台，自動適應視窗與 Canva iframe */
+    .stage-wrapper {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .stage {
+      width: min(100vw, calc(100vh * 16 / 9));
+      height: min(100vh, calc(100vw * 9 / 16));
+      background-color: var(--bg-cream);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 1.8% 2.4%;
+      box-shadow: 0 10px 35px rgba(30, 50, 92, 0.14);
+      overflow: hidden;
+      container-type: size;
+    }
+
+    /* 頂部標題與右上計分區 */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 13%;
+      margin-bottom: 1%;
+      gap: 1.5%;
+    }
+
+    .title-group {
+      display: flex;
+      align-items: baseline;
+      gap: 1.2cqw;
+      flex-wrap: nowrap;
+    }
+
+    .main-title {
+      font-size: 3.1cqw;
+      font-weight: 900;
+      color: var(--navy);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.6cqw;
+    }
+
+    .title-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--coral);
+      color: #fff;
+      font-size: 1.5cqw;
+      width: 2.8cqw;
+      height: 2.8cqw;
+      border-radius: 50%;
+      box-shadow: 0 0.25cqw 0 var(--coral-dark);
+    }
+
+    .subtitle {
+      font-size: 1.55cqw;
+      font-weight: 700;
+      color: var(--navy-light);
+      background: #F3EFE0;
+      padding: 0.45cqw 1.1cqw;
+      border-radius: 999px;
+      border: 2px solid var(--border-soft);
+    }
+
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.9cqw;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 0.2cqw solid var(--border-soft);
+      border-radius: 1.1cqw;
+      padding: 0.45cqw 1.2cqw;
+      display: flex;
+      align-items: center;
+      gap: 0.65cqw;
+      box-shadow: 0 0.25cqw 0 rgba(30, 50, 92, 0.06);
+    }
+
+    .stat-label {
+      font-size: 1.35cqw;
+      font-weight: 800;
+      color: var(--navy-light);
+    }
+
+    .stat-value {
+      font-size: 2.15cqw;
+      font-weight: 900;
+      min-width: 1.8cqw;
+      text-align: center;
+    }
+
+    .stat-correct .stat-value { color: var(--green-btn-dark); }
+    .stat-practice .stat-value { color: var(--amber-btn-dark); }
+    .stat-done .stat-value { color: var(--navy); }
+
+    /* 五個橫向等寬關卡選單 */
+    .level-nav {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1cqw;
+      height: 10%;
+      margin-bottom: 1.4%;
+    }
+
+    .level-btn {
+      background: var(--bg-card);
+      color: var(--navy);
+      border: 0.22cqw solid var(--border-soft);
+      border-radius: 1.1cqw;
+      font-size: 1.75cqw;
+      font-weight: 900;
+      font-family: inherit;
+      cursor: pointer;
+      transition: transform 0.12s ease, background-color 0.15s ease, border-color 0.15s ease;
+      box-shadow: 0 0.35cqw 0 var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.02em;
+    }
+
+    .level-btn:hover:not(:disabled) {
+      border-color: var(--coral);
+      background: #FFF9F7;
+    }
+
+    .level-btn:active:not(:disabled) {
+      transform: translateY(0.2cqw);
+      box-shadow: 0 0.15cqw 0 var(--border-soft);
+    }
+
+    .level-btn.active {
+      background: var(--coral);
+      color: #FFFFFF;
+      border-color: var(--coral-dark);
+      box-shadow: 0 0.35cqw 0 var(--coral-dark);
+    }
+
+    .level-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    /* 主內容區：左轉盤/抽題機、右抽題結果與操作按鈕 */
+    .main-content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 48% 50.5%;
+      gap: 1.5%;
+      height: 73%;
+    }
+
+    .panel {
+      background: var(--bg-card);
+      border: 0.25cqw solid var(--border-soft);
+      border-radius: 1.8cqw;
+      box-shadow: 0 0.45cqw 0 rgba(30, 50, 92, 0.06);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.6cqw;
+      overflow: hidden;
+    }
+
+    /* 左側：前四關轉盤容器 */
+    .wheel-view {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .wheel-stage {
+      position: relative;
+      width: 34cqw;
+      height: 34cqw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 轉盤上方固定紅色指針 */
+    .wheel-pointer {
+      position: absolute;
+      top: -1.1cqw;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 3.8cqw;
+      height: 4.4cqw;
+      z-index: 20;
+      filter: drop-shadow(0 0.3cqw 0.25cqw rgba(30, 50, 92, 0.25));
+      pointer-events: none;
+    }
+
+    .wheel-svg-wrapper {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      box-shadow: 0 0.6cqw 1.6cqw rgba(30, 50, 92, 0.14);
+      position: relative;
+    }
+
+    .wheel-rotor {
+      width: 100%;
+      height: 100%;
+      will-change: transform;
+    }
+
+    /* 轉盤中心固定入聲韻尾圓盤 */
+    .wheel-center-cap {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 9.2cqw;
+      height: 9.2cqw;
+      border-radius: 50%;
+      background: var(--bg-cream);
+      border: 0.45cqw solid var(--navy);
+      box-shadow: 0 0.35cqw 0.8cqw rgba(30, 50, 92, 0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 15;
+      pointer-events: none;
+    }
+
+    .wheel-center-text {
+      font-family: "Century Gothic", "Quicksand", "Trebuchet MS", "Arial Rounded MT Bold", "Microsoft JhengHei", sans-serif;
+      font-size: 3.4cqw;
+      font-weight: 900;
+      color: var(--navy);
+      letter-spacing: 0.02em;
+    }
+
+    .sector-text {
+      font-family: "Century Gothic", "Quicksand", "Trebuchet MS", "Arial Rounded MT Bold", "Microsoft JhengHei", sans-serif;
+      font-size: 36px;
+      font-weight: 900;
+      fill: var(--navy);
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+
+    /* 左側：第五關綜合大挑戰大型隨機抽題機 */
+    .machine-view {
+      width: 100%;
+      height: 100%;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2cqw 1.6cqw;
+    }
+
+    .machine-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      background: #F6F2E4;
+      border: 0.2cqw solid var(--border-soft);
+      border-radius: 1.2cqw;
+      padding: 0.7cqw 1.4cqw;
+    }
+
+    .machine-title {
+      font-size: 1.85cqw;
+      font-weight: 900;
+      color: var(--navy);
+    }
+
+    .machine-progress {
+      font-size: 1.65cqw;
+      font-weight: 900;
+      color: var(--coral-dark);
+      background: #FFFFFF;
+      padding: 0.35cqw 1.1cqw;
+      border-radius: 999px;
+      border: 0.18cqw solid var(--coral);
+    }
+
+    .machine-screen-outer {
+      width: 100%;
+      flex: 1;
+      margin: 1.4cqw 0;
+      background: var(--navy);
+      border-radius: 1.8cqw;
+      padding: 1.1cqw;
+      box-shadow: inset 0 0.4cqw 0.8cqw rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .machine-lights {
+      display: flex;
+      gap: 1.2cqw;
+      margin-bottom: 0.8cqw;
+    }
+
+    .bulb {
+      width: 1.1cqw;
+      height: 1.1cqw;
+      border-radius: 50%;
+      background: #FFD166;
+      opacity: 0.45;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    .bulb.lit {
+      opacity: 1;
+      transform: scale(1.2);
+      box-shadow: 0 0 0.8cqw #FFD166;
+    }
+
+    .machine-screen {
+      width: 100%;
+      flex: 1;
+      background: var(--bg-cream);
+      border-radius: 1.3cqw;
+      border: 0.3cqw solid #D8D0B8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1cqw;
+    }
+
+    /* 第五關所有拼音使用相同文字顏色(深藍色)、超大字體 */
+    .machine-word {
+      font-family: "Century Gothic", "Quicksand", "Trebuchet MS", "Arial Rounded MT Bold", "Microsoft JhengHei", sans-serif;
+      font-size: 8.2cqw;
+      font-weight: 900;
+      color: var(--navy);
+      letter-spacing: 0.03em;
+      line-height: 1;
+    }
+
+    .machine-word.placeholder {
+      font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
+      font-size: 2.8cqw;
+      color: var(--navy-light);
+    }
+
+    .machine-footer {
+      font-size: 1.45cqw;
+      font-weight: 800;
+      color: var(--navy-light);
+    }
+
+    /* 右側面板：狀態列、超大拼音結果顯示區、操作按鈕區 */
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: stretch;
+      padding: 1.6cqw 2cqw;
+    }
+
+    .right-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8cqw;
+    }
+
+    .mode-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5cqw;
+      font-size: 1.45cqw;
+      font-weight: 900;
+      padding: 0.45cqw 1.1cqw;
+      border-radius: 999px;
+      background: #F3EFE0;
+      color: var(--navy);
+      border: 0.18cqw solid var(--border-soft);
+    }
+
+    .mode-pill.review-active {
+      background: #EDE8FF;
+      color: var(--purple-btn-dark);
+      border-color: var(--purple-btn);
+    }
+
+    .round-progress-badge {
+      font-size: 1.45cqw;
+      font-weight: 900;
+      color: var(--navy-light);
+      background: #F8F5EA;
+      padding: 0.45cqw 1.1cqw;
+      border-radius: 999px;
+      border: 0.18cqw solid var(--border-soft);
+    }
+
+    /* 超大抽題結果卡片 */
+    .result-display-box {
+      flex: 1;
+      margin: 1.1cqw 0;
+      background: var(--bg-cream);
+      border: 0.3cqw dashed #D6CEB4;
+      border-radius: 1.6cqw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 1cqw;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .result-display-box.has-word {
+      border-style: solid;
+      border-color: var(--coral);
+      background: #FFFDF8;
+    }
+
+    .result-caption {
+      font-size: 1.45cqw;
+      font-weight: 800;
+      color: var(--navy-light);
+      margin-bottom: 0.4cqw;
+    }
+
+    .result-pinyin {
+      font-family: "Century Gothic", "Quicksand", "Trebuchet MS", "Arial Rounded MT Bold", "Microsoft JhengHei", sans-serif;
+      font-size: 8.8cqw;
+      font-weight: 900;
+      color: var(--navy);
+      line-height: 1.05;
+      letter-spacing: 0.03em;
+      text-align: center;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .result-pinyin.waiting {
+      font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
+      font-size: 2.5cqw;
+      color: var(--navy-light);
+    }
+
+    .result-pinyin.pop {
+      transform: scale(1.08);
+    }
+
+    .status-toast {
+      min-height: 2.1cqw;
+      margin-top: 0.3cqw;
+      font-size: 1.45cqw;
+      font-weight: 900;
+      color: var(--coral-dark);
+      text-align: center;
+    }
+
+    /* 主要抽題按鈕（珊瑚紅） */
+    .primary-spin-btn {
+      width: 100%;
+      background: var(--coral);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 1.3cqw;
+      padding: 1.05cqw 1.5cqw;
+      font-size: 2.35cqw;
+      font-weight: 900;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 0.45cqw 0 var(--coral-dark);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
+      margin-bottom: 1.1cqw;
+      letter-spacing: 0.04em;
+    }
+
+    .primary-spin-btn:hover:not(:disabled) {
+      background: #FF5946;
+    }
+
+    .primary-spin-btn:active:not(:disabled) {
+      transform: translateY(0.3cqw);
+      box-shadow: 0 0.15cqw 0 var(--coral-dark);
+    }
+
+    .primary-spin-btn:disabled {
+      background: #D5CWL8;
+      background-color: #CFC9B7;
+      color: #7E7A6E;
+      box-shadow: 0 0.35cqw 0 #B5AF9E;
+      cursor: not-allowed;
+    }
+
+    /* 評分按鈕列：答對了！ / 再練習 / 跳過 */
+    .judge-row {
+      display: grid;
+      grid-template-columns: 1.25fr 1.1fr 0.9fr;
+      gap: 0.9cqw;
+      margin-bottom: 1.1cqw;
+    }
+
+    .action-btn {
+      border: none;
+      border-radius: 1.1cqw;
+      padding: 0.85cqw 0.8cqw;
+      font-size: 1.75cqw;
+      font-weight: 900;
+      font-family: inherit;
+      color: #FFFFFF;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4cqw;
+    }
+
+    .action-btn:active:not(:disabled) {
+      transform: translateY(0.22cqw);
+    }
+
+    .action-btn:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    .btn-correct {
+      background: var(--green-btn);
+      box-shadow: 0 0.35cqw 0 var(--green-btn-dark);
+    }
+    .btn-correct:hover:not(:disabled) { background: #27A565; }
+
+    .btn-practice {
+      background: var(--amber-btn);
+      box-shadow: 0 0.35cqw 0 var(--amber-btn-dark);
+    }
+    .btn-practice:hover:not(:disabled) { background: #E38F07; }
+
+    .btn-skip {
+      background: var(--slate-btn);
+      box-shadow: 0 0.35cqw 0 var(--slate-btn-dark);
+    }
+    .btn-skip:hover:not(:disabled) { background: #55647A; }
+
+    /* 底部工具列：題目不重複、錯題複習、重新開始 */
+    .utility-row {
+      display: grid;
+      grid-template-columns: 1.15fr 1.15fr 1fr;
+      gap: 0.85cqw;
+    }
+
+    .util-btn {
+      background: #F5F1E3;
+      color: var(--navy);
+      border: 0.2cqw solid var(--border-soft);
+      border-radius: 1cqw;
+      padding: 0.65cqw 0.6cqw;
+      font-size: 1.42cqw;
+      font-weight: 900;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 0.28cqw 0 var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45cqw;
+      transition: all 0.15s ease;
+    }
+
+    .util-btn:hover:not(:disabled) {
+      border-color: var(--navy-light);
+      background: #ECE6D3;
+    }
+
+    .util-btn:active:not(:disabled) {
+      transform: translateY(0.18cqw);
+      box-shadow: 0 0.1cqw 0 var(--border-soft);
+    }
+
+    .util-btn:disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
+    }
+
+    .util-btn.toggle-on {
+      background: #E6F7EE;
+      border-color: var(--green-btn);
+      color: var(--green-btn-dark);
+      box-shadow: 0 0.28cqw 0 #BDE8D1;
+    }
+
+    .util-btn.review-on {
+      background: var(--purple-btn);
+      border-color: var(--purple-btn-dark);
+      color: #FFFFFF;
+      box-shadow: 0 0.28cqw 0 var(--purple-btn-dark);
+    }
+
+    .toggle-dot {
+      width: 0.9cqw;
+      height: 0.9cqw;
+      border-radius: 50%;
+      background: #A0AEC0;
+      display: inline-block;
+    }
+
+    .util-btn.toggle-on .toggle-dot {
+      background: var(--green-btn);
+    }
+
+    /* 待加強拼音小清單顯示 */
+    .practice-tags-bar {
+      margin-top: 0.65cqw;
+      min-height: 2.1cqw;
+      display: flex;
+      align-items: center;
+      gap: 0.45cqw;
+      flex-wrap: wrap;
+      font-size: 1.25cqw;
+      font-weight: 800;
+      color: var(--navy-light);
+    }
+
+    .practice-tag {
+      font-family: "Century Gothic", "Quicksand", "Trebuchet MS", sans-serif;
+      background: #FFF3D6;
+      color: #B45309;
+      border: 1px solid #FCD34D;
+      border-radius: 0.5cqw;
+      padding: 0.1cqw 0.55cqw;
+      font-size: 1.3cqw;
+      font-weight: 900;
+    }
+
+    /* 答對歡慶動畫覆蓋層 */
+    .celebration-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 60;
+      overflow: hidden;
+    }
+
+    .cheer-banner {
+      position: absolute;
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: var(--coral);
+      color: #FFFFFF;
+      border: 0.35cqw solid #FFFFFF;
+      box-shadow: 0 0.8cqw 2.2cqw rgba(30, 50, 92, 0.28);
+      padding: 1.1cqw 2.6cqw;
+      border-radius: 999px;
+      font-size: 3.2cqw;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      opacity: 0;
+      transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.22s ease;
+    }
+
+    .cheer-banner.show {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 1.1cqw;
+      height: 1.1cqw;
+      border-radius: 0.25cqw;
+      animation: confetti-burst 850ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes confetti-burst {
+      0% {
+        transform: translate(0, 0) scale(0.4) rotate(0deg);
+        opacity: 1;
+      }
+      80% {
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--dx), var(--dy)) scale(1.1) rotate(var(--rot));
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage-wrapper">
+    <div class="stage" id="gameStage">
+      <!-- 頂部：主標題、副標題與右上方統計 -->
+      <header class="header">
+        <div class="title-group">
+          <h1 class="main-title">
+            <span class="title-badge">★</span>
+            台羅入聲大挑戰
+          </h1>
+          <p class="subtitle">轉一轉、看一看，入聲拼出來！</p>
+        </div>
+
+        <div class="stats-bar" aria-label="過關統計">
+          <div class="stat-card stat-correct">
+            <span class="stat-label">答對題數</span>
+            <span class="stat-value" id="statCorrect">0</span>
+          </div>
+          <div class="stat-card stat-practice">
+            <span class="stat-label">待加強題數</span>
+            <span class="stat-value" id="statPractice">0</span>
+          </div>
+          <div class="stat-card stat-done">
+            <span class="stat-label">已完成題數</span>
+            <span class="stat-value" id="statCompleted">0</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- 畫面上方五個橫向等寬關卡按鈕 -->
+      <nav class="level-nav" id="levelNav" aria-label="關卡選單">
+        <button type="button" class="level-btn active" data-level="0">1. -p 轉盤</button>
+        <button type="button" class="level-btn" data-level="1">2. -t 轉盤</button>
+        <button type="button" class="level-btn" data-level="2">3. -k 轉盤</button>
+        <button type="button" class="level-btn" data-level="3">4. -h 轉盤</button>
+        <button type="button" class="level-btn" data-level="4">5. 綜合大挑戰</button>
+      </nav>
+
+      <!-- 主畫面：左側轉盤或抽題機，右側抽題結果及操作按鈕 -->
+      <main class="main-content">
+        <!-- 左側面板 -->
+        <section class="panel" aria-label="轉盤與抽題區">
+          <!-- 前四關：五扇形彩色轉盤 -->
+          <div class="wheel-view" id="wheelView">
+            <div class="wheel-stage">
+              <!-- 上方固定紅色指針 -->
+              <svg class="wheel-pointer" viewBox="0 0 60 70" aria-hidden="true">
+                <path d="M30 66 L8 14 A14 14 0 1 1 52 14 Z" fill="#E63946" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round" />
+                <circle cx="30" cy="18" r="6" fill="#FFFFFF" />
+              </svg>
+
+              <!-- 旋轉盤面 -->
+              <div class="wheel-svg-wrapper">
+                <svg class="wheel-rotor" id="wheelRotor" viewBox="-200 -200 400 400">
+                  <g id="wheelSectorsGroup"></g>
+                  <circle cx="0" cy="0" r="192" fill="none" stroke="#1E325C" stroke-width="8" />
+                </svg>
+              </div>
+
+              <!-- 轉盤中心顯示該關卡的入聲韻尾 -->
+              <div class="wheel-center-cap">
+                <span class="wheel-center-text" id="wheelCenterLabel">-p</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 第五關：大型隨機拼音抽題機 -->
+          <div class="machine-view" id="machineView">
+            <div class="machine-header">
+              <span class="machine-title">綜合隨機抽題機</span>
+              <span class="machine-progress" id="machineProgressText">已抽出 0／20 題</span>
+            </div>
+
+            <div class="machine-screen-outer">
+              <div class="machine-lights" id="machineLights">
+                <span class="bulb"></span>
+                <span class="bulb"></span>
+                <span class="bulb"></span>
+                <span class="bulb"></span>
+                <span class="bulb"></span>
+                <span class="bulb"></span>
+                <span class="bulb"></span>
+              </div>
+              <div class="machine-screen">
+                <div class="machine-word placeholder" id="machineWordDisplay">準備抽題</div>
+              </div>
+            </div>
+
+            <div class="machine-footer" id="machineFooterHint">按下右側「開始抽題」隨機抽出一個拼音</div>
+          </div>
+        </section>
+
+        <!-- 右側面板：抽題結果與操作按鈕 -->
+        <section class="panel right-panel" aria-label="抽題結果與操作區">
+          <div class="right-top-bar">
+            <span class="mode-pill" id="modeIndicator">一般抽題模式</span>
+            <span class="round-progress-badge" id="rightProgressBadge">本輪進度：0／5 題</span>
+          </div>
+
+          <div class="result-display-box" id="resultDisplayBox">
+            <div class="result-caption" id="resultCaption">請大聲拼讀抽中的台羅拼音</div>
+            <div class="result-pinyin waiting" id="resultPinyinText">請按下方按鈕開始</div>
+            <div class="status-toast" id="statusToast"></div>
+          </div>
+
+          <!-- 珊瑚紅色主要操作按鈕 -->
+          <button type="button" class="primary-spin-btn" id="spinBtn">開始轉盤</button>
+
+          <!-- 老師評分操作按鈕 -->
+          <div class="judge-row">
+            <button type="button" class="action-btn btn-correct" id="correctBtn" disabled>答對了！</button>
+            <button type="button" class="action-btn btn-practice" id="practiceBtn" disabled>再練習</button>
+            <button type="button" class="action-btn btn-skip" id="skipBtn" disabled>跳過</button>
+          </div>
+
+          <!-- 輔助功能按鈕列 -->
+          <div class="utility-row">
+            <button type="button" class="util-btn toggle-on" id="noRepeatBtn" aria-pressed="true">
+              <span class="toggle-dot"></span>
+              <span id="noRepeatLabel">題目不重複：開</span>
+            </button>
+            <button type="button" class="util-btn" id="reviewModeBtn">
+              錯題複習（0）
+            </button>
+            <button type="button" class="util-btn" id="resetLevelBtn">
+              重新開始
+            </button>
+          </div>
+
+          <!-- 待加強題目紀錄顯示 -->
+          <div class="practice-tags-bar" id="practiceTagsBar">
+            <span>待加強紀錄：尚無</span>
+          </div>
+        </section>
+      </main>
+
+      <!-- 答對了！歡慶動畫層 -->
+      <div class="celebration-layer" id="celebrationLayer">
+        <div class="cheer-banner" id="cheerBanner">太棒了！+1</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /**
+       * 五個扇形依照順時針排列，固定配色：
+       * 0: k 開頭 (綠色)
+       * 1: kh 開頭 (藍色)
+       * 2: ts 開頭 (紫色)
+       * 3: tsh 開頭 (黃色)
+       * 4: h 開頭 (粉紅色)
+       */
+      const SECTOR_COLORS = [
+        "#A8E6CF", // k 開頭：綠色
+        "#A3D8F4", // kh 開頭：藍色
+        "#D7BDE2", // ts 開頭：紫色
+        "#FFF0A5", // tsh 開頭：黃色
+        "#FFB7C5"  // h 開頭：粉紅色
+      ];
+
+      /**
+       * 五個關卡定義與課本指定題庫（不增刪修改、不加聲調符號）
+       */
+      const LEVELS = [
+        {
+          id: "level-p",
+          name: "-p 轉盤",
+          type: "wheel",
+          centerText: "-p",
+          actionText: "開始轉盤",
+          words: ["kip", "khip", "tsip", "tship", "hip"]
+        },
+        {
+          id: "level-t",
+          name: "-t 轉盤",
+          type: "wheel",
+          centerText: "-t",
+          actionText: "開始轉盤",
+          words: ["kit", "khit", "tsit", "tshit", "hit"]
+        },
+        {
+          id: "level-k",
+          name: "-k 轉盤",
+          type: "wheel",
+          centerText: "-k",
+          actionText: "開始轉盤",
+          words: ["kik", "khik", "tsik", "tshik", "hik"]
+        },
+        {
+          id: "level-h",
+          name: "-h 轉盤",
+          type: "wheel",
+          centerText: "-h",
+          actionText: "開始轉盤",
+          words: ["kih", "khih", "tsih", "tshih", "hih"]
+        },
+        {
+          id: "level-all",
+          name: "綜合大挑戰",
+          type: "machine",
+          centerText: "",
+          actionText: "開始抽題",
+          words: [
+            "kip", "khip", "tsip", "tship", "hip",
+            "kit", "khit", "tsit", "tshit", "hit",
+            "kik", "khik", "tsik", "tshik", "hik",
+            "kih", "khih", "tsih", "tshih", "hih"
+          ]
+        }
+      ];
+
+      /**
+       * 各關卡獨立保存狀態（切換關卡時不清除）
+       */
+      function createInitialLevelState() {
+        return {
+          correctCount: 0,
+          completedCount: 0,
+          practiceList: [],      // 需要加強的拼音（錯題清單，不重複紀錄同一字）
+          drawnInRound: [],      // 一般模式下本輪已抽出的拼音
+          drawnInReviewRound: [],// 錯題複習模式下本輪已抽出的拼音
+          noRepeat: true,        // 題目不重複：預設開啟
+          reviewMode: false,     // 是否處於錯題複習模式
+          currentWord: null,     // 目前抽中等待拼讀評分的拼音
+          awaitingJudge: false,  // 是否正等待老師評分
+          wheelRotation: 0,      // 記錄目前轉盤累積旋轉角度
+          statusMessage: ""      // 狀態提示文字
+        };
+      }
+
+      const levelStates = LEVELS.map(() => createInitialLevelState());
+      let currentLevelIndex = 0;
+      let isAnimating = false;
+
+      // DOM 元素
+      const levelButtons = Array.from(document.querySelectorAll(".level-btn"));
+      const statCorrectEl = document.getElementById("statCorrect");
+      const statPracticeEl = document.getElementById("statPractice");
+      const statCompletedEl = document.getElementById("statCompleted");
+
+      const wheelViewEl = document.getElementById("wheelView");
+      const wheelRotorEl = document.getElementById("wheelRotor");
+      const wheelSectorsGroupEl = document.getElementById("wheelSectorsGroup");
+      const wheelCenterLabelEl = document.getElementById("wheelCenterLabel");
+
+      const machineViewEl = document.getElementById("machineView");
+      const machineProgressTextEl = document.getElementById("machineProgressText");
+      const machineWordDisplayEl = document.getElementById("machineWordDisplay");
+      const machineLightsEl = document.getElementById("machineLights");
+      const bulbs = Array.from(machineLightsEl.querySelectorAll(".bulb"));
+
+      const modeIndicatorEl = document.getElementById("modeIndicator");
+      const rightProgressBadgeEl = document.getElementById("rightProgressBadge");
+      const resultDisplayBoxEl = document.getElementById("resultDisplayBox");
+      const resultPinyinTextEl = document.getElementById("resultPinyinText");
+      const statusToastEl = document.getElementById("statusToast");
+
+      const spinBtnEl = document.getElementById("spinBtn");
+      const correctBtnEl = document.getElementById("correctBtn");
+      const practiceBtnEl = document.getElementById("practiceBtn");
+      const skipBtnEl = document.getElementById("skipBtn");
+
+      const noRepeatBtnEl = document.getElementById("noRepeatBtn");
+      const noRepeatLabelEl = document.getElementById("noRepeatLabel");
+      const reviewModeBtnEl = document.getElementById("reviewModeBtn");
+      const resetLevelBtnEl = document.getElementById("resetLevelBtn");
+      const practiceTagsBarEl = document.getElementById("practiceTagsBar");
+
+      const celebrationLayerEl = document.getElementById("celebrationLayer");
+      const cheerBannerEl = document.getElementById("cheerBanner");
+
+      /**
+       * 建立前四關五個彩色扇形 SVG
+       * 扇形 0 中心角位於正上方 (0度，即12點鐘方向指針位置)，
+       * 扇形 0..4 依順時針每隔 72 度排列：
+       * 扇形 i 中心角 = i * 72°，起點角 = i * 72° - 36°，終點角 = i * 72° + 36°
+       */
+      function renderWheelSectors(words) {
+        const radius = 192;
+        const textRadius = 122;
+        const sectorAngle = 72; // 360 / 5
+        let svgMarkup = "";
+
+        for (let i = 0; i < 5; i++) {
+          const centerDeg = i * sectorAngle;
+          const startDeg = centerDeg - sectorAngle / 2;
+          const endDeg = centerDeg + sectorAngle / 2;
+
+          // 0度在正上方(12點鐘)，順時針增加：x = R * sin(θ), y = -R * cos(θ)
+          const startRad = (startDeg * Math.PI) / 180;
+          const endRad = (endDeg * Math.PI) / 180;
+
+          const x1 = (radius * Math.sin(startRad)).toFixed(3);
+          const y1 = (-radius * Math.cos(startRad)).toFixed(3);
+          const x2 = (radius * Math.sin(endRad)).toFixed(3);
+          const y2 = (-radius * Math.cos(endRad)).toFixed(3);
+
+          const pathD = `M 0 0 L ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2} Z`;
+
+          const centerRad = (centerDeg * Math.PI) / 180;
+          const tx = (textRadius * Math.sin(centerRad)).toFixed(3);
+          const ty = (-textRadius * Math.cos(centerRad)).toFixed(3);
+
+          svgMarkup += `
+            <g>
+              <path d="${pathD}" fill="${SECTOR_COLORS[i]}" stroke="#1E325C" stroke-width="5" stroke-linejoin="round" />
+              <text x="${tx}" y="${ty}" class="sector-text" transform="rotate(${centerDeg}, ${tx}, ${ty})">${words[i]}</text>
+            </g>
+          `;
+        }
+
+        wheelSectorsGroupEl.innerHTML = svgMarkup;
+      }
+
+      /**
+       * 取得目前關卡可抽題的候選題庫
+       */
+      function getCandidatePool(level, state) {
+        const activeBaseList = state.reviewMode ? state.practiceList.slice() : level.words.slice();
+
+        if (!state.noRepeat) {
+          return { pool: activeBaseList, startedNewRound: false };
+        }
+
+        const drawnList = state.reviewMode ? state.drawnInReviewRound : state.drawnInRound;
+        let remaining = activeBaseList.filter((w) => !drawnList.includes(w));
+        let startedNewRound = false;
+
+        if (remaining.length === 0 && activeBaseList.length > 0) {
+          if (state.reviewMode) {
+            state.drawnInReviewRound = [];
+          } else {
+            state.drawnInRound = [];
+          }
+          remaining = activeBaseList.slice();
+          startedNewRound = true;
+        }
+
+        return { pool: remaining, startedNewRound };
+      }
+
+      /**
+       * 更新整個畫面 UI
+       */
+      function updateUI() {
+        const level = LEVELS[currentLevelIndex];
+        const state = levelStates[currentLevelIndex];
+
+        // 1. 關卡按鈕高亮與鎖定
+        levelButtons.forEach((btn, idx) => {
+          btn.classList.toggle("active", idx === currentLevelIndex);
+          btn.disabled = isAnimating;
+        });
+
+        // 2. 右上方計分統計（答對題數、待加強題數、已完成題數）
+        statCorrectEl.textContent = state.correctCount;
+        statPracticeEl.textContent = state.practiceList.length;
+        statCompletedEl.textContent = state.completedCount;
+
+        // 3. 左側顯示切換（前四關轉盤 vs 第五關大型抽題機）
+        if (level.type === "wheel") {
+          wheelViewEl.style.display = "flex";
+          machineViewEl.style.display = "none";
+          wheelCenterLabelEl.textContent = level.centerText;
+          renderWheelSectors(level.words);
+          wheelRotorEl.style.transition = "none";
+          wheelRotorEl.style.transform = `rotate(${state.wheelRotation}deg)`;
+        } else {
+          wheelViewEl.style.display = "none";
+          machineViewEl.style.display = "flex";
+
+          const totalPoolCount = state.reviewMode ? state.practiceList.length : level.words.length;
+          const drawnCount = state.reviewMode
+            ? (state.noRepeat ? state.drawnInReviewRound.length : state.completedCount)
+            : (state.noRepeat ? state.drawnInRound.length : state.completedCount);
+
+          if (state.reviewMode) {
+            machineProgressTextEl.textContent = `複習已抽出 ${Math.min(drawnCount, totalPoolCount)}／${totalPoolCount} 題`;
+          } else {
+            machineProgressTextEl.textContent = `已抽出 ${Math.min(state.drawnInRound.length, 20)}／20 題`;
+          }
+
+          if (state.currentWord) {
+            machineWordDisplayEl.textContent = state.currentWord;
+            machineWordDisplayEl.classList.remove("placeholder");
+          } else {
+            machineWordDisplayEl.textContent = "準備抽題";
+            machineWordDisplayEl.classList.add("placeholder");
+          }
+        }
+
+        // 4. 右側上方模式與進度顯示
+        if (state.reviewMode) {
+          modeIndicatorEl.textContent = "錯題複習模式";
+          modeIndicatorEl.classList.add("review-active");
+          const revDone = state.noRepeat ? state.drawnInReviewRound.length : 0;
+          rightProgressBadgeEl.textContent = state.noRepeat
+            ? `複習進度：${Math.min(revDone, state.practiceList.length)}／${state.practiceList.length} 題`
+            : `待加強共 ${state.practiceList.length} 題`;
+        } else {
+          modeIndicatorEl.textContent = "一般抽題模式";
+          modeIndicatorEl.classList.remove("review-active");
+          const totalWords = level.words.length;
+          const roundCount = state.drawnInRound.length;
+          rightProgressBadgeEl.textContent = state.noRepeat
+            ? `已抽出 ${roundCount}／${totalWords} 題`
+            : `隨機抽題（共 ${totalWords} 題）`;
+        }
+
+        // 5. 右側超大拼音結果區
+        if (state.currentWord) {
+          resultPinyinTextEl.textContent = state.currentWord;
+          resultPinyinTextEl.classList.remove("waiting");
+          resultDisplayBoxEl.classList.add("has-word");
+        } else {
+          resultPinyinTextEl.textContent = `請按「${level.actionText}」`;
+          resultPinyinTextEl.classList.add("waiting");
+          resultDisplayBoxEl.classList.remove("has-word");
+        }
+
+        statusToastEl.textContent = state.statusMessage || "";
+
+        // 6. 主要抽題按鈕與評分按鈕狀態
+        spinBtnEl.textContent = level.actionText;
+        spinBtnEl.disabled = isAnimating;
+
+        const canJudge = !isAnimating && state.awaitingJudge && Boolean(state.currentWord);
+        correctBtnEl.disabled = !canJudge;
+        practiceBtnEl.disabled = !canJudge;
+        skipBtnEl.disabled = !canJudge;
+
+        // 7. 底部功能按鈕狀態
+        noRepeatBtnEl.classList.toggle("toggle-on", state.noRepeat);
+        noRepeatBtnEl.setAttribute("aria-pressed", String(state.noRepeat));
+        noRepeatLabelEl.textContent = state.noRepeat ? "題目不重複：開" : "題目不重複：關";
+        noRepeatBtnEl.disabled = isAnimating;
+
+        reviewModeBtnEl.textContent = state.reviewMode
+          ? `結束複習（${state.practiceList.length}）`
+          : `錯題複習（${state.practiceList.length}）`;
+        reviewModeBtnEl.classList.toggle("review-on", state.reviewMode);
+        reviewModeBtnEl.disabled = isAnimating || (!state.reviewMode && state.practiceList.length === 0);
+
+        resetLevelBtnEl.disabled = isAnimating;
+
+        // 8. 待加強拼音清單標籤
+        if (state.practiceList.length === 0) {
+          practiceTagsBarEl.innerHTML = "<span>待加強紀錄：尚無</span>";
+        } else {
+          const tagsHtml = state.practiceList
+            .map((w) => `<span class="practice-tag">${w}</span>`)
+            .join("");
+          practiceTagsBarEl.innerHTML = `<span>待加強紀錄：</span>${tagsHtml}`;
+        }
+      }
+
+      /**
+       * 開始轉盤（前四關）或開始抽題（第五關）
+       */
+      function handleStartDraw() {
+        if (isAnimating) return;
+
+        const level = LEVELS[currentLevelIndex];
+        const state = levelStates[currentLevelIndex];
+
+        // 若在錯題複習模式但已無待加強題目，自動切回一般模式
+        if (state.reviewMode && state.practiceList.length === 0) {
+          state.reviewMode = false;
+          state.statusMessage = "待加強題目已全部複習完成，回到一般抽題模式！";
+          updateUI();
+        }
+
+        const { pool, startedNewRound } = getCandidatePool(level, state);
+        if (pool.length === 0) {
+          state.statusMessage = "目前沒有可抽取的題目";
+          updateUI();
+          return;
+        }
+
+        // 每個拼音被抽中的機率相同
+        const randomIndex = Math.floor(Math.random() * pool.length);
+        const chosenWord = pool[randomIndex];
+
+        // 記錄不重複題庫已抽出
+        if (state.noRepeat) {
+          if (state.reviewMode) {
+            state.drawnInReviewRound.push(chosenWord);
+          } else {
+            state.drawnInRound.push(chosenWord);
+          }
+        }
+
+        isAnimating = true;
+        state.awaitingJudge = false;
+        state.statusMessage = startedNewRound
+          ? "已抽完一輪，開始新的一輪！"
+          : (level.type === "wheel" ? "轉盤旋轉中..." : "隨機抽題中...");
+
+        // 動畫開始前先禁用按鈕
+        spinBtnEl.disabled = true;
+        correctBtnEl.disabled = true;
+        practiceBtnEl.disabled = true;
+        skipBtnEl.disabled = true;
+        noRepeatBtnEl.disabled = true;
+        reviewModeBtnEl.disabled = true;
+        resetLevelBtnEl.disabled = true;
+        levelButtons.forEach((b) => { b.disabled = true; });
+        statusToastEl.textContent = state.statusMessage;
+
+        if (level.type === "wheel") {
+          runWheelSpinAnimation(level, state, chosenWord);
+        } else {
+          runMachineDrawAnimation(level, state, chosenWord);
+        }
+      }
+
+      /**
+       * 前四關轉盤旋轉動畫（約 1.75 秒，停止時紅色指針準確指向抽中的拼音）
+       */
+      function runWheelSpinAnimation(level, state, chosenWord) {
+        const sectorIndex = level.words.indexOf(chosenWord);
+        const sectorCenterAngle = sectorIndex * 72; // 扇形中心角 (順時針)
+
+        // 要讓扇形中心對準正上方指針 (0度)，轉盤旋轉角度需滿足：
+        // (rotation + sectorCenterAngle) ≡ 0 (mod 360) => rotation ≡ (360 - sectorCenterAngle) % 360
+        // 加入扇形內微小安全偏移 (-14° ~ +14°，扇形寬 72°) 或精準正中，這裡對準正中央最清楚直觀
+        const targetMod = (360 - sectorCenterAngle) % 360;
+        const currentMod = ((state.wheelRotation % 360) + 360) % 360;
+
+        let delta = targetMod - currentMod;
+        if (delta <= 0) {
+          delta += 360;
+        }
+
+        // 固定轉 5 圈 + 對齊角度，耗時 1.75 秒 (符合 1.5 ~ 2 秒規範)
+        const extraSpins = 5 * 360;
+        const nextRotation = state.wheelRotation + extraSpins + delta;
+        state.wheelRotation = nextRotation;
+
+        resultPinyinTextEl.textContent = "轉動中...";
+        resultPinyinTextEl.classList.add("waiting");
+        resultDisplayBoxEl.classList.remove("has-word");
+
+        // 觸發瀏覽器重繪後套用平滑減速過渡
+        void wheelRotorEl.offsetWidth;
+        wheelRotorEl.style.transition = "transform 1.75s cubic-bezier(0.15, 0.85, 0.25, 1)";
+        wheelRotorEl.style.transform = `rotate(${nextRotation}deg)`;
+
+        setTimeout(() => {
+          finishDraw(state, chosenWord);
+        }, 1780);
+      }
+
+      /**
+       * 第五關綜合大挑戰抽題機動畫（快速輪流顯示不同拼音，約 1.5 秒後停止）
+       */
+      function runMachineDrawAnimation(level, state, chosenWord) {
+        const allWords = level.words;
+        const durationMs = 1500;
+        const intervalMs = 65;
+        let elapsed = 0;
+        let lastShown = "";
+        let lightTick = 0;
+
+        machineWordDisplayEl.classList.remove("placeholder");
+        resultPinyinTextEl.textContent = "抽題中...";
+        resultPinyinTextEl.classList.add("waiting");
+        resultDisplayBoxEl.classList.remove("has-word");
+
+        const timer = setInterval(() => {
+          elapsed += intervalMs;
+
+          // 閃爍跑馬燈泡
+          bulbs.forEach((b, idx) => {
+            b.classList.toggle("lit", idx === lightTick % bulbs.length || idx === (lightTick + 3) % bulbs.length);
+          });
+          lightTick++;
+
+          // 隨機挑選一個與上一幀不同的拼音快速切換顯示
+          let pick = allWords[Math.floor(Math.random() * allWords.length)];
+          if (pick === lastShown && allWords.length > 1) {
+            pick = allWords[(allWords.indexOf(pick) + 1) % allWords.length];
+          }
+          lastShown = pick;
+          machineWordDisplayEl.textContent = pick;
+
+          if (elapsed >= durationMs) {
+            clearInterval(timer);
+            bulbs.forEach((b) => b.classList.add("lit"));
+            machineWordDisplayEl.textContent = chosenWord;
+            finishDraw(state, chosenWord);
+          }
+        }, intervalMs);
+      }
+
+      /**
+       * 抽題動畫結束，以超大字體顯示抽中的拼音並開放老師評分
+       */
+      function finishDraw(state, chosenWord) {
+        isAnimating = false;
+        state.currentWord = chosenWord;
+        state.awaitingJudge = true;
+        state.statusMessage = "請小朋友大聲唸出來，再由老師點選下方評分！";
+
+        updateUI();
+
+        // 超大字體彈跳提示效果
+        resultPinyinTextEl.classList.remove("pop");
+        void resultPinyinTextEl.offsetWidth;
+        resultPinyinTextEl.classList.add("pop");
+        setTimeout(() => {
+          resultPinyinTextEl.classList.remove("pop");
+        }, 240);
+      }
+
+      /**
+       * 播放「答對了！」簡短歡慶動畫
+       */
+      function playCelebrationAnimation() {
+        const colors = ["#FF6B5B", "#2EB872", "#F59E0B", "#7C5CFA", "#38BDF8", "#F472B6"];
+
+        cheerBannerEl.classList.add("show");
+
+        for (let i = 0; i < 26; i++) {
+          const piece = document.createElement("span");
+          piece.className = "confetti-piece";
+          const angle = (Math.PI * 2 * i) / 26 + (Math.random() * 0.25 - 0.125);
+          const dist = 12 + Math.random() * 24;
+          const dx = `${(Math.cos(angle) * dist).toFixed(2)}cqw`;
+          const dy = `${(Math.sin(angle) * dist).toFixed(2)}cqw`;
+          const rot = `${Math.floor(Math.random() * 540 - 270)}deg`;
+
+          piece.style.left = "50%";
+          piece.style.top = "48%";
+          piece.style.backgroundColor = colors[i % colors.length];
+          piece.style.setProperty("--dx", dx);
+          piece.style.setProperty("--dy", dy);
+          piece.style.setProperty("--rot", rot);
+
+          celebrationLayerEl.appendChild(piece);
+          setTimeout(() => {
+            piece.remove();
+          }, 880);
+        }
+
+        setTimeout(() => {
+          cheerBannerEl.classList.remove("show");
+        }, 720);
+      }
+
+      /**
+       * 老師點選「答對了！」：增加一分並播放簡短歡慶動畫
+       */
+      function handleCorrect() {
+        if (isAnimating) return;
+        const state = levelStates[currentLevelIndex];
+        if (!state.awaitingJudge || !state.currentWord) return;
+
+        const word = state.currentWord;
+        state.correctCount += 1;
+        state.completedCount += 1;
+        state.awaitingJudge = false;
+
+        // 若在錯題複習模式中答對，將該拼音從待加強清單移除
+        if (state.reviewMode) {
+          state.practiceList = state.practiceList.filter((w) => w !== word);
+          state.drawnInReviewRound = state.drawnInReviewRound.filter((w) => w !== word);
+
+          if (state.practiceList.length === 0) {
+            state.reviewMode = false;
+            state.statusMessage = `「${word}」答對了！待加強題目已全部過關！`;
+          } else {
+            state.statusMessage = `「${word}」答對了！已從待加強清單移除。`;
+          }
+        } else {
+          state.statusMessage = `「${word}」答對了！獲得 1 分！`;
+        }
+
+        playCelebrationAnimation();
+        updateUI();
+      }
+
+      /**
+       * 老師點選「再練習」：記錄需要加強的拼音，不扣分
+       */
+      function handlePractice() {
+        if (isAnimating) return;
+        const state = levelStates[currentLevelIndex];
+        if (!state.awaitingJudge || !state.currentWord) return;
+
+        const word = state.currentWord;
+        state.completedCount += 1;
+        state.awaitingJudge = false;
+
+        if (!state.practiceList.includes(word)) {
+          state.practiceList.push(word);
+        }
+
+        state.statusMessage = `已將「${word}」加入待加強清單（不扣分），可點選錯題複習加強！`;
+        updateUI();
+      }
+
+      /**
+       * 老師點選「跳過」：不計分，進入下一題
+       */
+      function handleSkip() {
+        if (isAnimating) return;
+        const state = levelStates[currentLevelIndex];
+        if (!state.awaitingJudge || !state.currentWord) return;
+
+        const word = state.currentWord;
+        state.awaitingJudge = false;
+        state.currentWord = null;
+        state.statusMessage = `已跳過「${word}」（不計分），請抽取下一題。`;
+        updateUI();
+      }
+
+      /**
+       * 切換「題目不重複」開關
+       */
+      function handleToggleNoRepeat() {
+        if (isAnimating) return;
+        const state = levelStates[currentLevelIndex];
+        state.noRepeat = !state.noRepeat;
+        state.statusMessage = state.noRepeat
+          ? "已開啟「題目不重複」：所有題目抽完後才開始新的一輪。"
+          : "已關閉「題目不重複」：每次從全部題目隨機抽取。";
+        updateUI();
+      }
+
+      /**
+       * 切換「錯題複習」模式：針對先前答錯（再練習）的拼音重新抽題
+       */
+      function handleToggleReviewMode() {
+        if (isAnimating) return;
+        const state = levelStates[currentLevelIndex];
+
+        if (!state.reviewMode) {
+          if (state.practiceList.length === 0) {
+            state.statusMessage = "目前沒有待加強的拼音喔！";
+            updateUI();
+            return;
+          }
+          state.reviewMode = true;
+          state.drawnInReviewRound = [];
+          state.currentWord = null;
+          state.awaitingJudge = false;
+          state.statusMessage = `已進入「錯題複習」，將針對 ${state.practiceList.length} 個待加強拼音抽題！`;
+        } else {
+          state.reviewMode = false;
+          state.currentWord = null;
+          state.awaitingJudge = false;
+          state.statusMessage = "已回到一般抽題模式。";
+        }
+
+        updateUI();
+      }
+
+      /**
+       * 「重新開始」：清除目前關卡的分數及抽題紀錄（不影響其他關卡）
+       */
+      function handleResetCurrentLevel() {
+        if (isAnimating) return;
+        const prevRotation = levelStates[currentLevelIndex].wheelRotation;
+        const freshState = createInitialLevelState();
+        freshState.wheelRotation = prevRotation;
+        freshState.statusMessage = "已清除本關卡的分數與抽題紀錄！";
+        levelStates[currentLevelIndex] = freshState;
+
+        bulbs.forEach((b) => b.classList.remove("lit"));
+        updateUI();
+      }
+
+      /**
+       * 切換關卡（各關卡分數及練習紀錄獨立保存，切換時不清除）
+       */
+      function handleSelectLevel(index) {
+        if (isAnimating || index === currentLevelIndex) return;
+        currentLevelIndex = index;
+        bulbs.forEach((b) => b.classList.remove("lit"));
+        updateUI();
+      }
+
+      // 綁定事件
+      levelButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const idx = Number(btn.getAttribute("data-level"));
+          handleSelectLevel(idx);
+        });
+      });
+
+      spinBtnEl.addEventListener("click", handleStartDraw);
+      correctBtnEl.addEventListener("click", handleCorrect);
+      practiceBtnEl.addEventListener("click", handlePractice);
+      skipBtnEl.addEventListener("click", handleSkip);
+      noRepeatBtnEl.addEventListener("click", handleToggleNoRepeat);
+      reviewModeBtnEl.addEventListener("click", handleToggleReviewMode);
+      resetLevelBtnEl.addEventListener("click", handleResetCurrentLevel);
+
+      // 初次載入渲染
+      updateUI();
+    })();
+  </script>
+</body>
+</html>
